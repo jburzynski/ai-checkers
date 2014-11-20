@@ -48,12 +48,13 @@ public class EvaluatePosition // Ta klasa jest wymagana - nie usuwaj jej
         rating += calculateMaterialCriterion(board._board[i][j]);
 //        rating += calculateCoverageCriterion(board, color, i, j);
         rating += calculateProgressCriterion(board, color, i, j);
+//        rating += calculateCenterCriterion(board, i, j);
 
         return rating;
     }
 
     private static int calculateMaterialCriterion(Piece piece) {
-        return piece.king ? 25 : 5;
+        return piece.king ? 15 : 5;
     }
 
     private static int calculateCoverageCriterion(AIBoard board, boolean color, int i, int j) {
@@ -62,7 +63,7 @@ public class EvaluatePosition // Ta klasa jest wymagana - nie usuwaj jej
         }
 
         int result = 0;
-        int coverageBonus = 10;
+        int coverageBonus = 7;
 
         for (int m = i - 1; m < i + 3; m += 2) {
             for (int n = j - 1; n < j + 3; n += 2) {
@@ -80,6 +81,19 @@ public class EvaluatePosition // Ta klasa jest wymagana - nie usuwaj jej
             return 0;
         }
         int distance = color == Piece.WHITE ? board.getSize() - i : i;
-        return 20 * distance;
+        return 10 * distance;
+    }
+
+    private static int calculateCenterCriterion(AIBoard board, int i, int j) {
+        int size = board.getSize();
+
+        int maxBonus = 100;
+        int maxValue = 2 * (int)Math.pow(2, size / 2);
+
+        int diffI = Math.abs(i - size / 2);
+        int diffJ = Math.abs(j - size / 2);
+        int value = (int)Math.pow(2, size / 2 - diffI) + (int)Math.pow(2, size / 2 - diffJ);
+
+        return (int)((float) maxBonus * (float)value / (float)maxValue);
     }
 }
